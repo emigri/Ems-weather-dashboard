@@ -96,7 +96,7 @@ const updateRecentCities = () => {
   );
 
   const city = localStorageSearches[localStorageSearches.length - 1];
-  const cityBtn = `<button type="button" class="btn btn-success mb-1" onclick="searchCity('${city}')"> ${city} </button> `;
+  const cityBtn = `<button type="button" class="btn btn-secondary mb-1" onclick="searchCity('${city}')"> ${city} </button> `;
   $("#history").append(cityBtn);
 };
 
@@ -106,8 +106,9 @@ const showRecentCities = () => {
     localStorage.getItem("recentSearches")
   );
   localStorageSearches.forEach((search) => {
-    const cityBtn = `<button type="button" class="btn btn-success mb-1" onclick="searchCity('${search}')"> ${search} </button> `;
+    const cityBtn = `<button type="button" class="btn btn-secondary mb-1" onclick="searchCity('${search}')"> ${search} </button> `;
     $("#history").append(cityBtn);
   });
 };
 showRecentCities();
+// localStorage.clear();
