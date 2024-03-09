@@ -12,7 +12,7 @@ const searchCity = async (cityName) => {
     JSON.parse(localStorage.getItem("recentSearches")) || [];
   recentSearches.push(cityName);
   localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
-  recentCities();
+  updateRecentCities();
 
   fetch(
     `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=4a727a43e8e7f8d3a04f2aa378bedb8d`
@@ -30,19 +30,18 @@ const searchCity = async (cityName) => {
         });
     });
 };
-// validation + catch errors
-// styling
-
 const currentWeather = (data, cityName) => {
   const date = dayjs.unix(data.dt).format(`D[/]MM[/]YYYY`);
-
   var weatherToday =
-    "<div id='today'>" +
+    "<div id='today' class='border border-dark p-4 rounded'>" +
     "<h3>" +
     cityName +
     " " +
     date +
     "</h3>" +
+    "<img src='https://openweathermap.org/img/w/" +
+    data.weather[0].icon +
+    ".png'/> " +
     "<p> Temp: " +
     data.temp +
     " " +
@@ -61,15 +60,20 @@ const currentWeather = (data, cityName) => {
 
 const dailyForecast = (array) => {
   $("#forecast").empty();
+  var forecastHeader = "<h2> 5 day forecast </h2>";
+  $("#forecast").append(forecastHeader);
   array.forEach((forecast, i) => {
     const date = dayjs.unix(forecast.dt).format(`D[/]MM[/]YYYY`);
     var dailyWeather =
-      "<div id='daily-" +
+      "<div class='col' id='daily-" +
       i +
       "'>" +
       "<h4> " +
       date +
       "</h4>" +
+      "<img src='https://openweathermap.org/img/w/" +
+      forecast.weather[0].icon +
+      ".png'/> " +
       "<p> Temp: " +
       forecast.temp.day +
       " " +
@@ -86,13 +90,24 @@ const dailyForecast = (array) => {
 };
 
 // create array of previously searched cities
-const recentCities = () => {
+const updateRecentCities = () => {
   const localStorageSearches = JSON.parse(
     localStorage.getItem("recentSearches")
   );
 
   const city = localStorageSearches[localStorageSearches.length - 1];
-
-  const cityBtn = `<button onclick="searchCity('${city}')"> ${city} </button> `;
+  const cityBtn = `<button type="button" class="btn btn-success mb-1" onclick="searchCity('${city}')"> ${city} </button> `;
   $("#history").append(cityBtn);
 };
+
+//display cities saves in local storage on reload
+const showRecentCities = () => {
+  const localStorageSearches = JSON.parse(
+    localStorage.getItem("recentSearches")
+  );
+  localStorageSearches.forEach((search) => {
+    const cityBtn = `<button type="button" class="btn btn-success mb-1" onclick="searchCity('${search}')"> ${search} </button> `;
+    $("#history").append(cityBtn);
+  });
+};
+showRecentCities();
