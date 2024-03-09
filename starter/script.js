@@ -8,6 +8,12 @@ $("#search-button").click(() => {
 const searchCity = async (cityName) => {
   let cityResponse;
 
+  const recentSearches =
+    JSON.parse(localStorage.getItem("recentSearches")) || [];
+  recentSearches.push(cityName);
+  localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+  recentCities();
+
   fetch(
     `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=4a727a43e8e7f8d3a04f2aa378bedb8d`
   )
@@ -25,7 +31,6 @@ const searchCity = async (cityName) => {
     });
 };
 // validation + catch errors
-// local storage for recent searches, create buttons
 // styling
 
 const currentWeather = (data, cityName) => {
@@ -49,12 +54,13 @@ const currentWeather = (data, cityName) => {
     data.wind_speed +
     " km/h" +
     "</div>";
-  $("#today").append(weatherToday);
+  $("#today").html(weatherToday);
 };
 
 // function to get 5 day forecast
 
 const dailyForecast = (array) => {
+  $("#forecast").empty();
   array.forEach((forecast, i) => {
     const date = dayjs.unix(forecast.dt).format(`D[/]MM[/]YYYY`);
     var dailyWeather =
@@ -80,9 +86,13 @@ const dailyForecast = (array) => {
 };
 
 // create array of previously searched cities
-const topCities = [];
+const recentCities = () => {
+  const localStorageSearches = JSON.parse(
+    localStorage.getItem("recentSearches")
+  );
 
-topCities.forEach((city) => {
-  const cityBtn = "<button> " + city + " </button>";
-  $("#history").append(topCities);
-});
+  const city = localStorageSearches[localStorageSearches.length - 1];
+
+  const cityBtn = `<button onclick="searchCity('${city}')"> ${city} </button> `;
+  $("#history").append(cityBtn);
+};
