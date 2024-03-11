@@ -8,27 +8,33 @@ $("#search-button").click(() => {
 const searchCity = async (cityName) => {
   let cityResponse;
 
-  const recentSearches =
-    JSON.parse(localStorage.getItem("recentSearches")) || [];
-  recentSearches.push(cityName);
-  localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
-  updateRecentCities();
+  if (cityName !== "") {
+    const recentSearches =
+      JSON.parse(localStorage.getItem("recentSearches")) || [];
+    if (!recentSearches.includes(cityName)) {
+      recentSearches.push(cityName);
+      localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+      updateRecentCities(cityName);
+    }
 
-  fetch(
-    `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=4a727a43e8e7f8d3a04f2aa378bedb8d`
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      cityResponse = data[0];
-      fetch(
-        `https://api.openweathermap.org/data/3.0/onecall?lat=${cityResponse.lat}&lon=${cityResponse.lon}&exclude=hourly,minutely&appid=4a727a43e8e7f8d3a04f2aa378bedb8d&units=metric`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          currentWeather(data.current, cityName);
-          dailyForecast(data.daily.slice(1, 6));
-        });
-    });
+    fetch(
+      `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=4a727a43e8e7f8d3a04f2aa378bedb8d`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        cityResponse = data[0];
+        fetch(
+          `https://api.openweathermap.org/data/3.0/onecall?lat=${cityResponse.lat}&lon=${cityResponse.lon}&exclude=hourly,minutely&appid=4a727a43e8e7f8d3a04f2aa378bedb8d&units=metric`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            currentWeather(data.current, cityName);
+            dailyForecast(data.daily.slice(1, 6));
+          });
+      });
+  } else {
+    alert("Please enter a city name");
+  }
 };
 const currentWeather = (data, cityName) => {
   const date = dayjs.unix(data.dt).format(`D[/]MM[/]YYYY`);
@@ -110,5 +116,7 @@ const showRecentCities = () => {
     $("#history").append(cityBtn);
   });
 };
+
 showRecentCities();
+
 // localStorage.clear();
