@@ -18,7 +18,7 @@ const searchCity = async (cityName) => {
     }
 
     fetch(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=4a727a43e8e7f8d3a04f2aa378bedb8d`
+      `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=4a727a43e8e7f8d3a04f2aa378bedb8d`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -30,7 +30,13 @@ const searchCity = async (cityName) => {
           .then((data) => {
             currentWeather(data.current, cityName);
             dailyForecast(data.daily.slice(1, 6));
+          })
+          .catch((error) => {
+            console.log(error);
           });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   } else {
     alert("Please enter a city name");
@@ -111,10 +117,13 @@ const showRecentCities = () => {
   const localStorageSearches = JSON.parse(
     localStorage.getItem("recentSearches")
   );
-  localStorageSearches.forEach((search) => {
-    const cityBtn = `<button type="button" class="btn btn-secondary mb-1" onclick="searchCity('${search}')"> ${search} </button> `;
-    $("#history").append(cityBtn);
-  });
+
+  if (localStorageSearches) {
+    localStorageSearches.forEach((search) => {
+      const cityBtn = `<button type="button" class="btn btn-secondary mb-1" onclick="searchCity('${search}')"> ${search} </button> `;
+      $("#history").append(cityBtn);
+    });
+  }
 };
 
 showRecentCities();
