@@ -32,11 +32,11 @@ const searchCity = async (cityName) => {
             dailyForecast(data.daily.slice(1, 6));
           })
           .catch((error) => {
-            console.log(error);
+            return "Forecast unavailable";
           });
       })
       .catch((error) => {
-        console.log(error);
+        return "Please enter a city name";
       });
   } else {
     alert("Please enter a city name");
