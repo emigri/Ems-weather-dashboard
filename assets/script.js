@@ -3,6 +3,8 @@ $("#search-button").click(() => {
   event.preventDefault();
   let cityName = $("#search-input").val();
   searchCity(cityName);
+  // set inner search bar to empty string
+  cityName = $("#search-input").val("");
 });
 
 const searchCity = async (cityName) => {
@@ -128,4 +130,10 @@ const showRecentCities = () => {
 
 showRecentCities();
 
-// localStorage.clear();
+//Clear search history
+$("#clear-search-history").click(() => {
+  event.preventDefault();
+  localStorage.clear();
+  // set history array to empty string until another search is made
+  $("#history").html("No recent history");
+});
