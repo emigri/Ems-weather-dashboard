@@ -134,6 +134,6 @@ showRecentCities();
 $("#clear-search-history").click(() => {
   event.preventDefault();
   localStorage.clear();
+
   // set history array to empty string until another search is made
-  $("#history").html("No recent history");
 });
